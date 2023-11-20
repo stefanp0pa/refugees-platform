@@ -1,0 +1,38 @@
+[
+    {
+        "id": "6873cb70-3234-4406-bee5-7a4b70084384",
+        "title": "Warm house and food",
+        "location": "Iasi",
+        "phone": "+2 777 567 8902",
+        "author": "Jamala Ruslana",
+        "email": "jamala.ruslana@gmail.com",
+        "group": "1 adult, 1 child",
+        "description": "We need a warm house and food for 1 adult and 1 child",
+        "identifiers": ["food", "house"],
+        "authorId": "d1b0b4a0-5b0a-4b0a-8b0a-0b0a0b0a0b0a"
+    },
+    {
+        "id":"c16c1faa-dad2-4d56-bdda-8e6ba91912c4",
+        "title": "Transportation",
+        "location": "Galati",
+        "phone": "+9 234 567 8901",
+        "author": "Mikhail Kuznetsov",
+        "email": "mikhail.kuznetsov@gmail.com",
+        "group": "2 adults, 2 children, 1 elder",
+        "description": "We need transportation to Bucharest and some money for 2 adults, 2 children and 1 elder",
+        "identifiers": ["transportation", "donation"],
+        "authorId": "472ced2e-5c4f-4360-bc70-da6c22780b9e"
+    },
+    {
+        "id":"3fc89988-2c05-4f2a-b787-5b8e87894b67",
+        "title": "Accomodation for a family",
+        "location": "Galati",
+        "phone": "+9 234 567 8901",
+        "author": "Mikhail Kuznetsov",
+        "email": "mikhail.kuznetsov@gmail.com",
+        "group": "2 adults, 2 children, 1 elder",
+        "description": "We need accomodation and food for 1-2 nights",
+        "identifiers": ["house", "food"],
+        "authorId": "472ced2e-5c4f-4360-bc70-da6c22780b9e"
+    }
+]

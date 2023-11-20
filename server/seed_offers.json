@@ -1,0 +1,35 @@
+[
+    {
+        "id": "c56af77c-f132-40c0-832b-6d2186f3cd4b",
+        "title": "Donation of 2000 RON",
+        "location": "Galati",
+        "author": "Stefan Mandache",
+        "email": "stefan.mandache@gmail.com",
+        "phone": "+3 333 567 8903",
+        "description": "Donation of 2000 RON to serve for anyone in need",
+        "identifiers": ["donation"],
+        "authorId": "7967eba4-903e-4305-9560-0f626806b8ae"
+    },
+    {
+        "id": "1336c301-dd53-4c0d-856d-2ed62e6a1798",
+        "title": "Safe accomodation for an entire family",
+        "location": "Galati",
+        "author": "Stefan Mandache",
+        "email": "stefan.mandache@gmail.com",
+        "phone": "+3 333 567 8903",
+        "description": "Safe accomodation for an entire family of maximum 8 members",
+        "identifiers": ["accomodation", "food"],
+        "authorId": "7967eba4-903e-4305-9560-0f626806b8ae"
+    },
+    {
+        "id": "774ffc93-6224-4b6b-877a-46287ded6202",
+        "title": "Fast transportation to any city",
+        "location": "Galati",
+        "author": "Max Verstappen",
+        "email": "max.verstappen@gmail.com",
+        "phone": "+4 444 567 8904",
+        "description": "Fast transportation by sizeable van to any city in Romania",
+        "identifiers": ["transportation"],
+        "authorId": "075a2e2b-a171-4df3-a5e5-8fb492457499"
+    }
+]

@@ -1,13 +1,14 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useAuth0 } from '@auth0/auth0-react';
 
 import Home from './pages/Home/Home';
 import Info from './pages/Info/Info';
 import Error from './pages/Error/Error';
 
 import './App.css';
+import LoginButton from "./LoginButton";
+import LogoutButton from "./LogoutButton";
+import Profile from "./Profile";
 
 const router = createBrowserRouter([
   {
@@ -22,23 +23,29 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  // return (
+  //   <div>
+  //     <header>
+  //       <LoginButton/>
+  //       <LogoutButton/>
+  //     </header>
+  //     <Profile/>
+  //   </div>
+  // );
+
   return (
-    <div className="align-items-center justify-content-center set-font">
-      <div className="w-100">
-        <RouterProvider router={router} />
+    <div>
+      <header>
+        <LoginButton/>
+        <LogoutButton/>
+      </header>
+      <div className="align-items-center justify-content-center set-font">
+        <div className="w-100">
+          <RouterProvider router={router} />
+        </div>
       </div>
     </div>
   );
-
-  // return (
-  //   <Router>
-  //     <Switch>
-  //       <Route path="/" exact component={Home} />
-  //       <Route path="/info" component={Info} />
-  //       <Route path="*" component={NotFound} />
-  //     </Switch>
-  //   </Router>
-  // );
 }
 
 export default App;
