@@ -43,12 +43,12 @@ class User:
         del self.__dict__['self']
 
 class Request:
-    def __init__(self, id, title, location, phone, author, email, group, description, identifiers, authorId):
+    def __init__(self, id, title, location, phone, author, email, group, description, identifiers, authorId, accepted):
         self.__dict__.update(locals())
         del self.__dict__['self']
 
 class Offer:
-    def __init__(self, id, title, location, phone, author, email, description, identifiers, authorId):
+    def __init__(self, id, title, location, phone, author, email, description, identifiers, authorId, accepted):
         self.__dict__.update(locals())
         del self.__dict__['self']
 
@@ -222,176 +222,199 @@ seed_subscribers_from_json(db)
 
 # ############################## REQUESTS #####################################
 
-# @app.route('/api/requests', methods=['POST'])
-# def post_requests():
-#     payload = request.get_json()
-#     print('Posting request...')
-#     try:
-#         requestData = {
-#             'id': str(uuid.uuid4()),
-#             'title': payload['title'],
-#             'subtitle': payload['subtitle'],
-#             'location': payload['location'],
-#             'phone': payload['phone'],
-#             'author': payload['author'],
-#             'group': payload['group'],
-#             'description': payload['description'],
-#             'identifiers': payload['identifiers'],
-#             'author': payload['author']
-#         }
-#         db.requests.insert_one(requestData)     
-#         return Response(status=201)
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=409)
+def send_request_accept_email(request_author, accepter):
+    print(f">>>> 📧 Sending email to {request_author} that {accepter} has accepted their help request...")
+    print(">>>> 📧 Email sent!")
 
-# @app.route('/api/requests', methods=['GET'])
-# def get_requests():
-#     print('Getting requests...')
-#     try:
-#         # get all the offers from the database
-#         data = list(db.requests.find())
+def broadcast_request(request_title, subscribers):
+    print(f">>>> 📧 Broadcasting request {request_title} to subscribers...")
+    for subscriber in subscribers:
+        print(f">>>> 📧 Sending email to {subscriber} that a new request has been posted...")
+        print(">>>> 📧 Email sent!")
 
-#         # remove the '_id' field inserted by mongoDB 
-#         for elem in data:
-#             elem.pop('_id', None)
+# Posting a new request
+@app.route('/api/requests', methods=['POST'])
+def post_request():
+    payload = request.get_json()
+    try:
+        new_request = {
+            'id': str(uuid.uuid4()),
+            'title': payload['title'],
+            'location': payload['location'],
+            'phone': payload['phone'],
+            'author': payload['author'],
+            'email': payload['email'],
+            'group': payload['group'],
+            'description': payload['description'],
+            'identifiers': payload['identifiers'],
+            'authorId': payload['authorId'],
+            'accepted': False
+        }
+        db.requests.insert_one(new_request)
+        
+        required_topics = payload['identifiers']
+        if required_topics is None or len(required_topics) == 0:
+            print(">>>> There are no topics attached on this request, no subscriber will be notified!")
+            return Response(status=201)
+            
+        subscribers = db.subscribers.find()
+        filtered_subscribers = [subscriber for subscriber in subscribers if any(topic in required_topics for topic in subscriber["topics"])]
+        filtered_subscribers_names = [filtered_subscriber["name"] for filtered_subscriber in filtered_subscribers]
+        
+        broadcast_request(payload['title'], filtered_subscribers_names)
+        
+        return Response(status=201)
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
-#         response = jsonify(data)
-#         response.headers.add('Access-Control-Allow-Origin', '*')
+# Accept request
+@app.route('/api/requests/accept', methods=['POST'])
+def accept_request():
+    try:
+        payload = request.get_json(silent=True)
+        accepter = payload['accepter']
+        accepterId = payload['accepterId']
+        requestId = payload['requestId']
+        
+        db.requests.update_one({"id": requestId}, {"$set": {"accepted": True}})
+        
+        request = db.requests.find_one({"id": requestId})
+        request_author = request['author']
+        
+        send_request_accept_email(request_author, accepter)
 
-#         return response, 200
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=500)
+        return Response(status=200)
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
-# @app.route('/api/request-details', methods=['GET'])
-# def get_request_details():
-#     args = request.args
-#     args = args.to_dict()
-#     try:
-#         response = db.requests.find_one({'id': args['id']})
-#         response = json_util.dumps(response)
-#         return response, 200
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=500)
 
-# ############################## FAVORITES ####################################
+# Retrieve all requests
+@app.route('/api/requests', methods=['GET'])
+def get_requests():
+    try:
+        # Get all the requests from the database
+        requests_cursor = db.offers.find()
 
-# @app.route('/api/favorites', methods=['POST'])
-# def post_favorite():
-#     payload = request.get_json()
-#     print("Marking favorite...")
-#     try:
-#         favorite = {
-#             'id': str(uuid.uuid4()),
-#             'postId': payload['postId'],
-#             'profileId': payload['profileId']
-#         }
-#         db.favorites.insert_one(favorite)    
-#         return Response(status=201)
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=409)
+        # Convert the cursor to a list and remove the '_id' field inserted by MongoDB
+        requests = [{k: v for k, v in elem.items() if k != '_id'} for elem in requests_cursor]
 
-# @app.route('/api/favorites', methods=['DELETE'])
-# def delete_favorite():
-#     print("Deleting favorite...")
-#     payload = request.get_json()
-#     try:
-#         deleteItem = {
-#             'postId': payload['postId'],
-#             'profileId': payload['profileId']
-#         }
-#         db.favorites.delete_one({
-#             "postId": deleteItem['postId'], 
-#             "profileId": deleteItem['profileId']})
+        # Create a JSON response with the requests
+        response = jsonify(requests)
 
-#         return Response(status=200)
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=500)
+        # Set the 'Access-Control-Allow-Origin' header to allow cross-origin requests
+        response.headers.add('Access-Control-Allow-Origin', '*')
 
-# @app.route('/api/favorites', methods=['GET'])
-# def get_favorites():
-#     print('Getting favorites...')
-#     try:
-#         # get all the offers from the database
-#         data = list(db.favorites.find())
+        return response, 200
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
-#         # remove the '_id' field inserted by mongoDB 
-#         for elem in data:
-#             elem.pop('_id', None)
 
-#         response = jsonify(data)
-#         response.headers.add('Access-Control-Allow-Origin', '*')
+# Retrieving request details
+@app.route('/api/request-details', methods=['GET'])
+def get_requests_details():
+    try:
+        args = request.args.to_dict()
+        response = db.requests.find_one({'id': args['id']})
+        response = json_util.dumps(response)
+        return response, 200
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
-#         return response, 200
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=500)
 
 # ############################## OFFERS #######################################
 
-# @app.route('/api/offers', methods=['POST'])
-# def post_offers():
-#     payload = request.get_json()
-#     print('Posting offer...')
-#     try:
-#         offer = {
-#             'id': str(uuid.uuid4()),
-#             'title': payload['title'],
-#             'subtitle': payload['subtitle'],
-#             'location': payload['location'],
-#             'phone': payload['phone'],
-#             'interval': payload['interval'],
-#             'description': payload['description'],
-#             'identifiers': payload['identifiers'],
-#             'author': payload['author']
-#         }
-#         db.offers.insert_one(offer) 
-#         return Response(status=201)
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=400)
+def send_offer_accept_email(offer_author, accepter):
+    print(f">>>> 📧 Sending email to {offer_author} that {accepter} has accepted their help offer...")
+    print(">>>> 📧 Email sent!")
 
-# @app.route('/api/offers', methods=['GET'])
-# def get_offers():
-#     print('Getting offers...')
-#     try:
-#         # get all the offers from the database
-#         data = list(db.offers.find())
+def broadcast_offer(offer_title, subscribers):
+    print(f">>>> 📧 Broadcasting offer {offer_title} to subscribers...")
+    for subscriber in subscribers:
+        print(f">>>> 📧 Sending email to {subscriber} that a new offer has been posted...")
+        print(">>>> 📧 Email sent!")
 
-#         # remove the '_id' field inserted by mongoDB 
-#         for elem in data:
-#             elem.pop('_id', None)
+# Posting a new offer
+@app.route('/api/offers', methods=['POST'])
+def post_offers():
+    payload = request.get_json()
+    try:
+        new_offer = {
+            'id': str(uuid.uuid4()),
+            'title': payload['title'],
+            'location': payload['location'],
+            'phone': payload['phone'],
+            'author': payload['author'],
+            'email': payload['email'],
+            'description': payload['description'],
+            'identifiers': payload['identifiers'],
+            'authorId': payload['authorId'],
+            'accepted': False
+        }
+        db.offers.insert_one(new_offer)
+        
+        required_topics = payload['identifiers']
+        if required_topics is None or len(required_topics) == 0:
+            print(">>>> There are no topics attached on this offer, no subscriber will be notified!")
+            return Response(status=201)
+            
+        subscribers = db.subscribers.find()
+        filtered_subscribers = [subscriber for subscriber in subscribers if any(topic in required_topics for topic in subscriber["topics"])]
+        filtered_subscribers_names = [filtered_subscriber["name"] for filtered_subscriber in filtered_subscribers]
+        
+        broadcast_offer(payload['title'], filtered_subscribers_names)
+        
+        return Response(status=201)
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
-#         response = jsonify(data)
-#         response.headers.add('Access-Control-Allow-Origin', '*')
+# Retrieve all offers
+@app.route('/api/offers', methods=['GET'])
+def get_offers():
+    try:
+        # Get all the offers from the database
+        offers_cursor = db.offers.find()
 
-#         return response, 200
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=500)
+        # Convert the cursor to a list and remove the '_id' field inserted by MongoDB
+        offers = [{k: v for k, v in elem.items() if k != '_id'} for elem in offers_cursor]
 
-# @app.route('/api/offers/<int:id>', methods=['PUT'])
-# def put_offer(id):
-#     # get payload from request
-#     payload = request.get_json(silent=True)
+        # Create a JSON response with the offers
+        response = jsonify(offers)
 
-#     try:
-#         dbResponse = db.offers.update_one(
-#             {"id": id},
-#             {"$set": {
-#                 'favorite': payload['favorite']
-#             }}
-#         )
+        # Set the 'Access-Control-Allow-Origin' header to allow cross-origin requests
+        response.headers.add('Access-Control-Allow-Origin', '*')
 
-#         return Response(status=200)
-#     except Exception as ex:
-#         print(ex)
-#         return Response(status=409)
+        return response, 200
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
+# Accept offer
+@app.route('/api/offers/accept', methods=['POST'])
+def accept_offer():
+    try:
+        payload = request.get_json(silent=True)
+        accepter = payload['accepter']
+        accepterId = payload['accepterId']
+        offerId = payload['offerId']
+        
+        db.offers.update_one({"id": offerId}, {"$set": {"accepted": True}})
+        
+        offer = db.offers.find_one({"id": offerId})
+        offer_author = offer['author']
+        
+        send_offer_accept_email(offer_author, accepter)
+
+        return Response(status=200)
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
+
+# Retrieving offer details
 @app.route('/api/offer-details', methods=['GET'])
 def get_offer_details():
     try:

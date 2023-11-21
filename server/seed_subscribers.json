@@ -1,5 +1,10 @@
 [
     {
+        "authorId": "0900f9d2-2207-4933-8487-db121c6eddcd",
+        "name": "John Doe",
+        "topics": ["donation", "clothes"]
+    },
+    {
         "authorId": "7967eba4-903e-4305-9560-0f626806b8ae",
         "name": "Stefan Mandache",
         "topics": ["house", "donation", "food"]
