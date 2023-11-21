@@ -220,6 +220,51 @@ seed_subscribers_from_json(db)
 #         print(ex)
 #         return jsonify({'message': 'Error creating profile'}), 400
 
+# ############################## PROFILE #####################################
+
+@app.route('/api/login', methods=['POST'])
+def login():
+    try:
+        payload = request.get_json()
+        name = payload['name']
+        password = payload['password']
+        
+        result = db.users.find_one({'name': name, 'password': password})
+        if result:
+            return jsonify({'message': 'Login successful'}), 200
+        return jsonify({'message': 'Login unsuccessful'}), 400
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
+
+@app.route('/api/register', methods=['POST'])
+def register():
+    try:
+        payload = request.get_json()
+        new_user = {
+            'id': str(uuid.uuid4()),
+            'name': payload['name'],
+            'email': payload['email'],
+            'phone': payload['phone'],
+            'password': payload['password'],
+            'phone': payload['phone'],
+            'userType': payload['userType'],
+            'group': payload['group']
+        }
+        new_subscriber = {
+            'authorId': new_user['id'],
+            'name': new_user['name'],
+            'topics': payload['topics']
+        }
+            
+        db.users.insert_one(new_user)
+        db.subscribers.insert_one(new_subscriber)
+        return jsonify({'message': 'User created successfully'}), 201
+        
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
+
 # ############################## REQUESTS #####################################
 
 def send_request_accept_email(request_author, accepter):
@@ -288,7 +333,6 @@ def accept_request():
     except Exception as ex:
         print(ex)
         return Response(status=500)
-
 
 # Retrieve all requests
 @app.route('/api/requests', methods=['GET'])
