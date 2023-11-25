@@ -1,0 +1,16 @@
+.custom-search {
+    background-color: #EFF1FE;
+    width: 100%;
+}
+
+.search-container {
+    margin-left: 10%;
+    width: 80%;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 640px) {
+    .search-container {
+        margin-top: 50px;
+    }
+}

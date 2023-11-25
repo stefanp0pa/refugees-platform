@@ -1,0 +1,35 @@
+.request-container {
+    width: 70%;
+    margin: 50px auto;
+    border: 1.5px solid #676464;
+    border-radius: 10px;
+    padding-top: 30px;
+    padding-bottom: 20px;
+}
+
+.request-title {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.request-form-input {
+    padding: 5px 10px;
+    border-radius: 10px;
+    border: 1px solid #676464;
+}
+
+.request-identifiers-input {
+    padding: 5px 10px;
+    border: 1px solid #676464;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+}
+
+.request-identifiers-text {
+    border: 1px solid #676464;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;    
+    padding: 5px 10px;
+}

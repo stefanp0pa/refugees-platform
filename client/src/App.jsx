@@ -1,10 +1,13 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Home from './pages/Home/Home';
+import About from './pages/About/About';
 import Info from './pages/Info/Info';
 import Error from './pages/Error/Error';
 import Register from './pages/Auth/Register/Register';
 import Login from "./pages/Auth/login/Login";
+import Requests from "./pages/Requests/Requests";
+import RequestDetails from './pages/RequestDetails/RequestDetails';
+import RequestForm from './pages/RequestForm/RequestForm';
 
 import Navbar from './components/Navbar/Navbar';
 
@@ -13,7 +16,7 @@ import './App.css';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <About />,
     errorElement: <Error />,
   },
   {
@@ -28,6 +31,18 @@ const router = createBrowserRouter([
     path: "info",
     element: <Info />,
   },
+  {
+    path: "requests",
+    element: <Requests/>
+  },
+  {
+    path: "request-details/:requestId",
+    element: <RequestDetails/>
+  },
+  {
+    path: 'request-form',
+    element: <RequestForm/>
+  }
 ]);
 
 function App() {

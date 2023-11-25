@@ -2,13 +2,15 @@ import { useState } from 'react';
 import './navbar.css';
 
 export default function BootstrapNavbar() {
+    const user = localStorage.getItem('user');
     const [_, setError] = useState("")
-    const [email, setEmail] = useState(localStorage.getItem('email'));
+    const [email, setEmail] = useState(user ? JSON.parse(user).email : "");
+    const [userType, setUserType] = useState(user? JSON.parse(user).userType : "");
 
     async function handleLogout() {
         try {
             // await logout();
-            localStorage.removeItem('email');
+            localStorage.removeItem('user');
             setError("")
         } catch {
             setError("Failed to log out");
@@ -59,6 +61,16 @@ export default function BootstrapNavbar() {
                         </a>
                     </> : 
                     <>
+                        { userType && userType === "refugee" &&
+                            <a href="/request-form" className="block mt-3 lg:inline-block lg:mt-0 text-teal-200 mr-4 nav-item">
+                                Add Request
+                            </a>
+                        }
+                        { userType && userType === "helper" &&
+                            <a href="/offer-form" className="block mt-3 lg:inline-block lg:mt-0 text-teal-200 mr-4 nav-item">
+                                Add Offer
+                            </a>
+                        }
                         <a href="/account" className="block mt-3 lg:inline-block lg:mt-0 text-teal-200 mr-4 nav-item">
                             Account
                         </a>

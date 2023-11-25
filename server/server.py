@@ -231,7 +231,8 @@ def login():
         
         result = db.users.find_one({'email': email, 'password': password})
         if result:
-            return jsonify({'message': 'Login successful'}), 200
+            response = json_util.dumps(result)
+            return response, 200
         return jsonify({'message': 'Login unsuccessful'}), 400
     except Exception as ex:
         print(ex)
@@ -339,7 +340,7 @@ def accept_request():
 def get_requests():
     try:
         # Get all the requests from the database
-        requests_cursor = db.offers.find()
+        requests_cursor = db.requests.find()
 
         # Convert the cursor to a list and remove the '_id' field inserted by MongoDB
         requests = [{k: v for k, v in elem.items() if k != '_id'} for elem in requests_cursor]

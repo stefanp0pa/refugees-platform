@@ -40,8 +40,8 @@ export default function Login() {
         }
     }
 
-    const successPostLogin = () => {
-        localStorage.setItem("email", usernameRef.current.value);
+    const successPostLogin = (response) => {
+        localStorage.setItem("user", JSON.stringify(response.data));
         setTimeout(() => window.location.href = '/', 1000);
         setQueryStatus({ 
             error: "", 

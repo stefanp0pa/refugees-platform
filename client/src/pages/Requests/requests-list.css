@@ -1,0 +1,10 @@
+.card-list {
+    /* background-color: green; */
+}
+
+.cards-container {
+    width: 80%;
+    margin-left: 10%;
+    /* display: flex; */
+    justify-content: space-between;
+}
