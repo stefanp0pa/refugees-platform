@@ -11,6 +11,7 @@ import RequestForm from './pages/RequestForm/RequestForm';
 import Offers from "./pages/Offers/Offers";
 import OfferDetails from "./pages/OfferDetails/OfferDetails";
 import OfferForm from "./pages/OfferForm/RequestForm";
+import Account from "./pages/Account/Account";
 
 import Navbar from './components/Navbar/Navbar';
 
@@ -58,6 +59,10 @@ const router = createBrowserRouter([
     path: 'offer-form',
     element: <OfferForm/>
   },
+  {
+    path: "account",
+    element: <Account/>
+  }
 ]);
 
 function App() {

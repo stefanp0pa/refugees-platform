@@ -1,0 +1,12 @@
+.account-quantity-input {
+    border: 1px solid #676464;
+    width: 4rem;
+    color: #676464;
+}
+
+.account-sign-btn {
+    border: 1px solid #676464;
+    color: #676464;
+    width: 30px;
+    font-weight: bold;
+}
