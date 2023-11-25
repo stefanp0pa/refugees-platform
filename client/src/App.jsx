@@ -1,14 +1,14 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { useAuth0 } from '@auth0/auth0-react';
 
 import Home from './pages/Home/Home';
 import Info from './pages/Info/Info';
 import Error from './pages/Error/Error';
+import Register from './pages/Auth/Register/Register';
+import Login from "./pages/Auth/login/Login";
+
+import Navbar from './components/Navbar/Navbar';
 
 import './App.css';
-import LoginButton from "./LoginButton";
-import LogoutButton from "./LogoutButton";
-import Profile from "./Profile";
 
 const router = createBrowserRouter([
   {
@@ -17,32 +17,25 @@ const router = createBrowserRouter([
     errorElement: <Error />,
   },
   {
+    path: "register",
+    element: <Register/>
+  },
+  {
+    path: "login",
+    element: <Login/>
+  },
+  {
     path: "info",
     element: <Info />,
   },
 ]);
 
 function App() {
-  // return (
-  //   <div>
-  //     <header>
-  //       <LoginButton/>
-  //       <LogoutButton/>
-  //     </header>
-  //     <Profile/>
-  //   </div>
-  // );
-
   return (
-    <div>
-      <header>
-        <LoginButton/>
-        <LogoutButton/>
-      </header>
-      <div className="align-items-center justify-content-center set-font">
-        <div className="w-100">
-          <RouterProvider router={router} />
-        </div>
+    <div className="align-items-center justify-content-center set-font">
+      <div className="w-100">
+        <Navbar/>
+        <RouterProvider router={router} />
       </div>
     </div>
   );

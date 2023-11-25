@@ -1,31 +1,28 @@
-const axios = require('axios');
+import axios from 'axios';
 
-const DEV_MODE = false
+const apiURL = 'http://localhost:7020'; //replace with localhost:7020 when testing
 
-const apiURL = DEV_MODE ? 'http://localhost:7020' : 'http://localhost:80'; //replace with localhost:7020 when testing
 const postOfferURL = apiURL + '/api/offers';
-const postRequestURL = apiURL + '/api/requests';
 const getOfferURL = apiURL + '/api/offers';
-const getRequestURL = apiURL + '/api/requests';
-const postFavoriteURL = apiURL + '/api/favorites';
-const getFavoritesURL = apiURL + '/api/favorites';
-const putOfferURL = apiURL + '/api/offers';
-const putRequestURL = apiURL + '/api/requests';
-const deleteFavoriteURL = apiURL + '/api/favorites';
+const acceptOfferURL = apiURL + '/api/offers/accept';
 const getOfferByIdURL = apiURL + '/api/offer-details';
-const getRequestByIdURL = apiURL + '/api/request-details';
-const postProfileURL = apiURL + '/api/profile';
-const getProfileURL = apiURL + '/api/profile';
-const updateProfileURL = apiURL + '/api/update-profile';
-const resetPasswordUrl = apiURL + '/api/reset-password';
 
-export const getRequests = (token, success, failure) => {
+const getRequestURL = apiURL + '/api/requests';
+const postRequestURL = apiURL + '/api/requests';
+const acceptRequestURL = apiURL + '/api/requests/accept';
+const getRequestByIdURL = apiURL + '/api/request-details';
+
+const postLoginURL = apiURL + '/api/login';
+const postRegisterURL = apiURL + '/api/register';
+const getProfileURL = apiURL + '/api/profile';
+
+
+export const getAllRequests = (success, failure) => {
     axios({
         method: 'get',
         url: getRequestURL,
         headers: {
           'content-type': 'application/json; charset=utf-8',
-          'Authorization': `${token}`
         }
     })
     .then((response) => {
@@ -34,14 +31,14 @@ export const getRequests = (token, success, failure) => {
         failure(error);
     });
 }
-export const postRequest = (requestData, token, success, failure) => {
+
+export const postRequest = (requestData, success, failure) => {
     axios({
         method: 'post',
         url: postRequestURL,
         data: requestData,
         headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'Authorization': `${token}`
+            'content-type': 'application/json; charset=utf-8'
         }
     })
     .then((response) => {
@@ -50,23 +47,7 @@ export const postRequest = (requestData, token, success, failure) => {
         failure(error);
     });
 }
-export const putRequest = (data, id) => {
-    fetch(`${putRequestURL}/${id}`, {
-        method: 'put',
-        body: JSON.stringify(data),
-        headers : { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }).then(
-        res => res.json()
-    ).then(
-        data => console.log(data)
-    )
-    .catch(
-        error => console.log(error)
-    )
-}
+
 export const getRequestById = (requestData, success, failure) => {
     axios({
         method: 'get',
@@ -74,6 +55,39 @@ export const getRequestById = (requestData, success, failure) => {
         params: {
             id: requestData.id
         },
+        headers: {
+            'content-type': 'application/json; charset=utf-8'
+        }
+    })
+    .then((response) => {
+        success(response.data);
+    }, (error) => {
+        failure(error);
+    });
+}
+
+export const acceptRequest = (requestData, success, failure) => {
+    axios({
+        method: 'post',
+        url: acceptRequestURL,
+        data: requestData,
+        headers: {
+            'content-type': 'application/json; charset=utf-8'
+        }
+    })
+    .then((response) => {
+        success(response.data);
+    }, (error) => {
+        failure(error);
+    });
+}
+
+
+
+export const getAllOffers = (success, failure) => {
+    axios({
+        method: 'get',
+        url: getOfferURL,
         headers: {
           'content-type': 'application/json; charset=utf-8'
         }
@@ -85,30 +99,13 @@ export const getRequestById = (requestData, success, failure) => {
     });
 }
 
-
-export const getOffers = (token, success, failure) => {
-    axios({
-        method: 'get',
-        url: getOfferURL,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'Authorization': `${token}`
-        }
-    })
-    .then((response) => {
-        success(response.data);
-    }, (error) => {
-        failure(error);
-    });
-}
-export const postOffer = (offerData, token, success, failure) => {
+export const postOffer = (offerData, success, failure) => {
     axios({
         method: 'post',
         url: postOfferURL,
         data: offerData,
         headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'Authorization': `${token}`
+            'content-type': 'application/json; charset=utf-8'
         }
     })
     .then((response) => {
@@ -117,23 +114,7 @@ export const postOffer = (offerData, token, success, failure) => {
         failure(error);
     });
 }
-export const putOffer = (data, id) => {
-    fetch(`${putOfferURL}/${id}`, {
-        method: 'put',
-        body: JSON.stringify(data),
-        headers : { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        }
-    }).then(
-        res => res.json()
-    ).then(
-        data => console.log(data)
-    )
-    .catch(
-        error => console.log(error)
-    )
-}
+
 export const getOfferById = (offerData, success, failure) => {
     axios({
         method: 'get',
@@ -152,46 +133,13 @@ export const getOfferById = (offerData, success, failure) => {
     });
 }
 
-
-export const postFavorite = (favoriteData, token, success, failure) => {
+export const acceptOffer = (offerData, id) => {
     axios({
         method: 'post',
-        url: postFavoriteURL,
-        data: favoriteData,
+        url: acceptOfferURL,
+        data: offerData,
         headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'Authorization': `${token}`
-        }
-    })
-    .then((response) => {
-        success(response.data);
-    }, (error) => {
-        failure(error);
-    });
-}
-export const getFavorites = (token, success, failure) => {
-    axios({
-        method: 'get',
-        url: getFavoritesURL,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'Authorization': `${token}`
-        }
-    })
-    .then((response) => {
-        success(response.data);
-    }, (error) => {
-        failure(error);
-    });
-}
-export const deleteFavorite = (deleteData, token, success, failure) => {
-    axios({
-        method: 'delete',
-        url: deleteFavoriteURL,
-        data: deleteData,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'Authorization': `${token}`
+            'content-type': 'application/json; charset=utf-8'
         }
     })
     .then((response) => {
@@ -202,7 +150,8 @@ export const deleteFavorite = (deleteData, token, success, failure) => {
 }
 
 
-export const getProfile = (profileData, token, success, failure) => {
+
+export const getProfile = (profileData, success, failure) => {
     axios({
         method: 'get',
         url: getProfileURL,
@@ -210,8 +159,7 @@ export const getProfile = (profileData, token, success, failure) => {
             email: profileData.email
         },
         headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'Authorization': `${token}`
+          'content-type': 'application/json; charset=utf-8'
         }
     })
     .then((response) => {
@@ -220,14 +168,14 @@ export const getProfile = (profileData, token, success, failure) => {
         failure(error);
     });
 }
-export const postUpdateProfile = (updateData, token, success, failure) => {
+
+export const postRegister = (registerData, success, failure) => {
     axios({
         method: 'post',
-        url: updateProfileURL,
-        data: updateData,
+        url: postRegisterURL,
+        data: registerData,
         headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'Authorization': `${token}`
+          'content-type': 'application/json; charset=utf-8'
         }
     })
     .then((response) => {
@@ -236,30 +184,14 @@ export const postUpdateProfile = (updateData, token, success, failure) => {
         failure(error);
     });
 }
-export const postResetPassword = (resetData, token, success, failure) => {
+
+export const postLogin = (loginData, success, failure) => {
     axios({
         method: 'post',
-        url: resetPasswordUrl,
-        data: resetData,
+        url: postLoginURL,
+        data: loginData,
         headers: {
-            'content-type': 'application/json; charset=utf-8',
-            'Authorization': `${token}`
-        }
-    })
-    .then((response) => {
-        success(response);
-    }, (error) => {
-        failure(error);
-    });
-}
-export const postProfile = (profileData, token, success, failure) => {
-    axios({
-        method: 'post',
-        url: postProfileURL,
-        data: profileData,
-        headers: {
-          'content-type': 'application/json; charset=utf-8',
-          'Authorization': `${token}`
+          'content-type': 'application/json; charset=utf-8'
         }
   })
   .then((response) => {

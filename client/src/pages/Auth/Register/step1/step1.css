@@ -1,0 +1,62 @@
+.register-title {
+    font-size: 45px;
+}
+
+.option {
+    margin-bottom: 2rem;
+}
+
+.register-section {
+    width: 100%;
+}
+
+.register-input-wrapper i {
+    position: absolute;
+    color: #676464 !important;
+}
+  
+.register-input-wrapper {
+    margin-bottom: 10px;
+}
+
+.font-awesome-icon-register {
+    min-width: 40px;
+    margin-right: 20px;
+    padding-top: 7px;
+    padding-left: 10px;
+}
+
+.register-custom-input {
+    font-family: 'Inter';
+    padding-left: 35px;
+    width: 100%;
+    border-bottom: 1.5px solid #676464;
+    padding-bottom: 10px;
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    text-indent: 1px;
+    text-overflow: '';
+}
+
+.register-option {
+    color: #676464;
+}
+
+@media (max-width: 550px) {
+    .register-title {
+        font-size: 35px;
+    }
+
+    .register-input-wrapper {
+        width: 80%;
+        margin-left: 10%;
+    }
+
+    .register-submit-button {
+        width: 80%;
+    }
+}
+  

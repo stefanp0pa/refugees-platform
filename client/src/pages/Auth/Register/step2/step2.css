@@ -1,0 +1,27 @@
+.category-label {
+    width: 60%;
+    display: inline-block;
+    text-align: left;
+}
+
+.quantity-wrapper {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.register-title-step2 {
+    margin-bottom: 1rem;
+    font-size: 45px;
+}
+
+@media (max-width: 520px) {
+    .register-title-step2 {
+        font-size: 35px;
+    }
+
+    .quantity-input {
+        width: 2rem;
+    }
+}

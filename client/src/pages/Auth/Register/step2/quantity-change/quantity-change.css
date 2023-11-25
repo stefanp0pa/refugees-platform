@@ -1,0 +1,18 @@
+.quantity-input {
+    border: 1px solid #676464;
+    width: 4rem;
+    color: #676464;
+}
+
+.sign-btn {
+    border: 1px solid #676464;
+    color: #676464;
+    width: 30px;
+    font-weight: bold;
+}
+
+@media (max-width: 520px) {
+    .quantity-input {
+        width: 2rem;
+    }
+}

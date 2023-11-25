@@ -226,10 +226,10 @@ seed_subscribers_from_json(db)
 def login():
     try:
         payload = request.get_json()
-        name = payload['name']
+        email = payload['email']
         password = payload['password']
         
-        result = db.users.find_one({'name': name, 'password': password})
+        result = db.users.find_one({'email': email, 'password': password})
         if result:
             return jsonify({'message': 'Login successful'}), 200
         return jsonify({'message': 'Login unsuccessful'}), 400
@@ -470,6 +470,18 @@ def get_offer_details():
         print(ex)
         return Response(status=500)
 
+# ############################## PROFILE ####################################
+
+@app.route('/api/profile', methods=['GET'])
+def get_profile():
+    try:
+        args = request.args.to_dict()
+        response = db.users.find_one({'email': args['email']})
+        response = json_util.dumps(response)
+        return response, 200
+    except Exception as ex:
+        print(ex)
+        return Response(status=500)
 
 # ############################## MAIN #######################################
 @app.route('/')

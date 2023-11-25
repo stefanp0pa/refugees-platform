@@ -1,0 +1,28 @@
+.register-submit-button {
+    background-color: #3830da !important;
+    color: rgb(255, 255, 255);
+    width: 240px;
+    padding: 10px 0;
+    margin-top: 70px;
+    border-radius: 10px;
+}
+
+.register-submit-button:hover {
+    background-color: #645cf1 !important;
+}
+
+@media (max-width: 1024px) {
+    .side-photo {
+        display: none;
+    }
+}
+
+@media (max-width: 550px) {
+    .register-submit-button {
+        width: 240px;
+    }
+
+    #register-btn {
+        width: 240px;
+    }
+}
