@@ -8,6 +8,9 @@ import Login from "./pages/Auth/login/Login";
 import Requests from "./pages/Requests/Requests";
 import RequestDetails from './pages/RequestDetails/RequestDetails';
 import RequestForm from './pages/RequestForm/RequestForm';
+import Offers from "./pages/Offers/Offers";
+import OfferDetails from "./pages/OfferDetails/OfferDetails";
+import OfferForm from "./pages/OfferForm/RequestForm";
 
 import Navbar from './components/Navbar/Navbar';
 
@@ -42,7 +45,19 @@ const router = createBrowserRouter([
   {
     path: 'request-form',
     element: <RequestForm/>
-  }
+  },
+  {
+    path: "offers",
+    element: <Offers/>
+  },
+  {
+    path: "offer-details/:offerId",
+    element: <OfferDetails/>
+  },
+  {
+    path: 'offer-form',
+    element: <OfferForm/>
+  },
 ]);
 
 function App() {
