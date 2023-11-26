@@ -23,7 +23,8 @@ export default function SignUp() {
             children: 0,
             elders: 0,
             pets: 0
-        }
+        },
+        topics: ''
     });
 
     const validateFirstStep = () => {
@@ -43,6 +44,9 @@ export default function SignUp() {
         if (newUser.password === '') {
             errors.push('Please enter your password');
         }
+        if (newUser.topics === '') {
+            errors.push('Please enter your topics');
+        }
         return errors;
     }
 
@@ -53,9 +57,11 @@ export default function SignUp() {
             const userData = {
                 name: newUser.name,
                 email: newUser.email,
-                userType: newUser.userType === 'I offer help' ? 'provider' : 'requester',
+                password: newUser.password,
+                userType: newUser.userType === 'I offer help' ? 'helper' : 'refugee',
                 phone: newUser.phone,
-                group: newUser.group
+                group: `${newUser.group.adults} adults, ${newUser.group.children} children, ${newUser.group.elders} elders, ${newUser.group.pets} pets`,
+                topics: newUser.topics.split(',').map(topic => topic.trim())
             }
 
             try {
@@ -93,6 +99,7 @@ export default function SignUp() {
     const handleEmailChange = (value) => setNewUser({...newUser, email: value });
     const handleUserTypeChange = (value) => setNewUser({...newUser, userType: value });
     const handlePasswordChange = (value) => setNewUser({...newUser, password: value });
+    const handleTopicsChange = (value) => setNewUser({...newUser, topics: value });
 
     const updateStep= () => {
         const errors = validateFirstStep();
@@ -153,6 +160,7 @@ export default function SignUp() {
                             handleUserTypeChange={handleUserTypeChange}
                             handlePhoneChange={handlePhoneChange}
                             handlePasswordChange={handlePasswordChange}
+                            handleTopicsChange={handleTopicsChange}
                             updateStep={updateStep}
                         ></Step1> :
                         <Step2

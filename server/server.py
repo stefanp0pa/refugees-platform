@@ -260,7 +260,10 @@ def register():
             
         db.users.insert_one(new_user)
         db.subscribers.insert_one(new_subscriber)
-        return jsonify({'message': 'User created successfully'}), 201
+        
+        result = db.users.find_one({'email': new_user['email']})
+        response = json_util.dumps(result)
+        return response, 201
         
     except Exception as ex:
         print(ex)
@@ -302,9 +305,15 @@ def post_request():
         if required_topics is None or len(required_topics) == 0:
             print(">>>> There are no topics attached on this request, no subscriber will be notified!")
             return Response(status=201)
-            
+        
+        user = db.users.find_one({"id": payload['authorId']})
+
+        subscriberUserType = "refugee" if user['userType'] == "helper" else "helper"
+        subscriberUsers = db.users.find({"userType": subscriberUserType})
+        
         subscribers = db.subscribers.find()
         filtered_subscribers = [subscriber for subscriber in subscribers if any(topic in required_topics for topic in subscriber["topics"])]
+        filtered_subscribers = [subscriber for subscriber in filtered_subscribers if any(subscriberUser['id'] == subscriber['authorId'] for subscriberUser in subscriberUsers)]
         filtered_subscribers_names = [filtered_subscriber["name"] for filtered_subscriber in filtered_subscribers]
         
         broadcast_request(payload['title'], filtered_subscribers_names)
@@ -405,9 +414,16 @@ def post_offers():
         if required_topics is None or len(required_topics) == 0:
             print(">>>> There are no topics attached on this offer, no subscriber will be notified!")
             return Response(status=201)
-            
+        
+        user = db.users.find_one({"id": payload['authorId']})
+
+        subscriberUserType = "refugee" if user['userType'] == "helper" else "helper"
+        subscriberUsers = db.users.find({"userType": subscriberUserType})
+        
         subscribers = db.subscribers.find()
         filtered_subscribers = [subscriber for subscriber in subscribers if any(topic in required_topics for topic in subscriber["topics"])]
+        filtered_subscribers = [subscriber for subscriber in filtered_subscribers if any(subscriberUser['id'] == subscriber['authorId'] for subscriberUser in subscriberUsers)]
+        
         filtered_subscribers_names = [filtered_subscriber["name"] for filtered_subscriber in filtered_subscribers]
         
         broadcast_offer(payload['title'], filtered_subscribers_names)

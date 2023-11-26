@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import './step1.css';
 
-export default function Step1(props ){
+export default function Step1(props){
     return(
         <div>
             <h2 className="register-title">CREATE AN ACCOUNT</h2>
@@ -48,6 +48,13 @@ export default function Step1(props ){
                     <i className="fa fa-lock font-awesome-icon-register"></i>
                     <input className="register-custom-input" type="password" id="password" 
                         name="password" placeholder='Password' value={props.password} onChange={(event) => props.handlePasswordChange(event.currentTarget.value)}></input>
+                </div>
+            </div>
+
+            <div className="register-section">
+                <div className="register-input-wrapper">
+                    <i className="fa fa-user font-awesome-icon-register"></i>
+                    <input className="register-custom-input" type="text" id="topics" name="topics" placeholder='Topics separated by comma...' value={props.topics} onChange={(event) => props.handleTopicsChange(event.currentTarget.value)}></input>
                 </div>
             </div>
         </div>
