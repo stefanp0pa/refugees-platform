@@ -133,7 +133,7 @@ export const getOfferById = (offerData, success, failure) => {
     });
 }
 
-export const acceptOffer = (offerData, id) => {
+export const acceptOffer = (offerData, success, failure) => {
     axios({
         method: 'post',
         url: acceptOfferURL,

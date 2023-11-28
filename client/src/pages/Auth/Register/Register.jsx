@@ -78,6 +78,7 @@ export default function SignUp() {
     }
 
     const successPostProfile = (response) => {
+        localStorage.clear();
         localStorage.setItem("user", JSON.stringify(response.data));
         setTimeout(() => window.location.href = '/', 1000);
         setQueryStatus({ 

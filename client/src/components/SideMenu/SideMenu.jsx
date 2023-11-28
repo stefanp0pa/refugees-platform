@@ -8,8 +8,9 @@ export default function SideMenu(props) {
                 <p className="menu-section" onClick={() => props.setCurrentTab('')}>All</p>
                 <p className="menu-section" onClick={() => props.setCurrentTab('transportation')}>Transportation</p>
                 <p className="menu-section" onClick={() => props.setCurrentTab('donation')}>Donation</p>
-                <p className="menu-section" onClick={() => props.setCurrentTab('house')}>Home</p>
+                <p className="menu-section" onClick={() => props.setCurrentTab('house')}>House</p>
                 <p className="menu-section" onClick={() => props.setCurrentTab('food')}>Food</p>
+                <p className="menu-section" onClick={() => props.setCurrentTab('clothes')}>Clothes</p>
                 {
                     props.profile?.userType === 'provider' && props.currentTab !== 'requests' &&
                         <p className="menu-section" style={{background: "#6c63ff14"}}

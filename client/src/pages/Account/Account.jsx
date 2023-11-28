@@ -10,7 +10,7 @@ export default function Account() {
     const [profile, setProfile] = useState({
         email: '', name: '', 
         phone: '', userType: '',
-        group: ''
+        group: '', topics: ''
     });
     const [showReset, setShowReset] = useState(false);
 
@@ -27,6 +27,7 @@ export default function Account() {
     const nameChange = (value) => setProfile({...profile, name: value});
     const emailChange = (value) => setProfile({...profile, email: value});
     const phoneChange = (value) => setProfile({...profile, phone: value});
+    const topicsChange = (value) => setProfile({...profile, topics: value});
     const groupChange = (value) => setProfile({...profile, group: value});
     const increaseButton = (groupType) => setProfile({...profile, 
         group: {...profile.group, [groupType]: profile.group[groupType] + 1}});
@@ -70,7 +71,8 @@ export default function Account() {
             name: success.name,
             phone: success.phone,
             userType: success.userType,
-            group: success.group
+            group: success.group,
+            topics: success.topics
         });
     }
     const failureProfileDetails = (failure) => {
@@ -111,6 +113,13 @@ export default function Account() {
                         <input className="rounded-md border-[1px] border-black pb-2 pl-2 w-full" type="phone" id="phone" name="phone" placeholder='Phone' value={profile.phone} onChange={(event) => phoneChange(event.currentTarget.value)}></input>
                     </div>
                     <span className="text-xs mt-2 pb-4">Phone number is important because you might be contacted by other users. </span>
+                </div>
+                <div className='mb-4 flex flex-col text-justify mt-4 border-b-[1px] border-gray'>
+                    <span className="font-bold">Topics</span>
+                    <div className='mt-2'>
+                        <input className="rounded-md border-[1px] border-black pb-2 pl-2 w-full" type="text" id="topics" name="topics" placeholder='Topics separated by commas...' value={profile.topics} onChange={(event) => topicsChange(event.currentTarget.value)}></input>
+                    </div>
+                    <span className="text-xs mt-2 pb-4">Topics that you want to subscribe to...</span>
                 </div>
                 {profile.userType === 'refugee' &&
                     <div className="mt-4 flex flex-col text-justify border-b-[1px] border-gray">

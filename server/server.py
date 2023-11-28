@@ -262,6 +262,7 @@ def register():
         db.subscribers.insert_one(new_subscriber)
         
         result = db.users.find_one({'email': new_user['email']})
+        print(result)
         response = json_util.dumps(result)
         return response, 201
         
@@ -334,8 +335,8 @@ def accept_request():
         
         db.requests.update_one({"id": requestId}, {"$set": {"accepted": True}})
         
-        request = db.requests.find_one({"id": requestId})
-        request_author = request['author']
+        requestt = db.requests.find_one({"id": requestId})
+        request_author = requestt['author']
         
         send_request_accept_email(request_author, accepter)
 

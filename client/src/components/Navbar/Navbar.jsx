@@ -2,7 +2,7 @@ import { useState } from 'react';
 import './navbar.css';
 
 export default function BootstrapNavbar() {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem("user");
     const [_, setError] = useState("")
     const [email, setEmail] = useState(user ? JSON.parse(user).email : "");
     const [userType, setUserType] = useState(user? JSON.parse(user).userType : "");

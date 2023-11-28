@@ -41,6 +41,7 @@ export default function Login() {
     }
 
     const successPostLogin = (response) => {
+        localStorage.clear();
         localStorage.setItem("user", JSON.stringify(response.data));
         setTimeout(() => window.location.href = '/', 1000);
         setQueryStatus({ 

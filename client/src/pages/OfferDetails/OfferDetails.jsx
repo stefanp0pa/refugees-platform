@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import { getProfile, getOfferById } from '../../contexts/apis';
+import { getProfile, getOfferById, acceptOffer } from '../../contexts/apis';
 import { useParams } from 'react-router-dom';
 
 import moreInfoLogo from './more-info.svg';
@@ -10,29 +10,28 @@ export default function OfferDetails(props){
     let { offerId } = useParams();
     const user = localStorage.getItem('user');
     const email = user ? JSON.parse(user).email : "";
+    const name = user ? JSON.parse(user).name : "";
+    const userId = user ? JSON.parse(user).id : "";
+
     const [currentOffer, setCurrentOffer] = useState();
-
-    // const [profile, setProfile] = useState(null);
-
-    const concatIdentifiers = () => currentOffer.identifiers.join(' ');
 
     useEffect(() => {
         getOfferById({id: offerId}, successGetMoreInfo, failureGetMoreInfo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // useEffect(() => {
-    //     getProfile({email: email}, token, successGetProfile, failureGetProfile);
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
+    const acceptOfferEvent = async () => {
+        acceptOffer({ accepter: name, accepterId: userId, offerId: offerId }, successfulAcceptOffer, failureAcceptOffer);
+    }
 
-    // const successGetProfile = (data) => {
-    //     setProfile(data);
-    // }
-    // const failureGetProfile = (error) => {
-    //     console.log(error);
-    //     setProfile(null);
-    // }
+    const successfulAcceptOffer = () => {
+        alert("Offer accepted! Email was sent to the author...");
+        setTimeout(() => window.location.href = '/offers', 1000);
+    }
+
+    const failureAcceptOffer = () => {
+        alert("Offer not accepted!");
+    }
 
     const successGetMoreInfo = (data) => {
         setCurrentOffer(data);
@@ -81,6 +80,7 @@ export default function OfferDetails(props){
                         <label className='more-info-label'><strong>Identifiers:</strong></label>
                         <p className='more-info-section'>{currentOffer.identifiers.join(', ')}</p>
                     </div>
+                    <button className='accept-button' onClick={acceptOfferEvent}>Accept</button>
                 </div>
             </div>}
         </div>

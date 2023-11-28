@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import { getProfile, getRequestById } from '../../contexts/apis';
+import { getProfile, getRequestById, acceptRequest } from '../../contexts/apis';
 import { useParams } from 'react-router-dom';
 
 import moreInfoLogo from './more-info.svg';
@@ -10,29 +10,27 @@ export default function RequestDetails(props){
     let { requestId } = useParams();
     const user = localStorage.getItem('user');
     const email = user ? JSON.parse(user).email : "";
+    const name = user ? JSON.parse(user).name : "";
+    const userId = user ? JSON.parse(user).id : "";
     const [currentRequest, setCurrentRequest] = useState();
-
-    // const [profile, setProfile] = useState(null);
-
-    const concatIdentifiers = () => currentRequest.identifiers.join(' ');
 
     useEffect(() => {
         getRequestById({id: requestId}, successGetMoreInfo, failureGetMoreInfo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // useEffect(() => {
-    //     getProfile({email: email}, token, successGetProfile, failureGetProfile);
-    // // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
+    const acceptRequestEvent = async () => {
+        acceptRequest({ accepter: name, accepterId: userId, requestId: requestId }, successfulAcceptRequest, failureAcceptRequest);
+    }
 
-    // const successGetProfile = (data) => {
-    //     setProfile(data);
-    // }
-    // const failureGetProfile = (error) => {
-    //     console.log(error);
-    //     setProfile(null);
-    // }
+    const successfulAcceptRequest = () => {
+        alert("Request accepted! Email was sent to the author...");
+        setTimeout(() => window.location.href = '/requests', 1000);
+    }
+
+    const failureAcceptRequest = () => {
+        alert("Request not accepted!");
+    }
 
     const successGetMoreInfo = (data) => {
         setCurrentRequest(data);
@@ -85,6 +83,7 @@ export default function RequestDetails(props){
                         <label className='more-info-label'><strong>Identifiers:</strong></label>
                         <p className='more-info-section'>{currentRequest.identifiers.join(', ')}</p>
                     </div>
+                    <button className='accept-button' onClick={acceptRequestEvent}>Accept</button>
                 </div>
             </div>}
         </div>
