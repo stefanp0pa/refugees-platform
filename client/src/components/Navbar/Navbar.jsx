@@ -1,16 +1,22 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './navbar.css';
 
 export default function BootstrapNavbar() {
-    const user = localStorage.getItem("user");
+    
     const [_, setError] = useState("")
-    const [email, setEmail] = useState(user ? JSON.parse(user).email : "");
-    const [userType, setUserType] = useState(user? JSON.parse(user).userType : "");
+    const [email, setEmail] = useState("");
+    const [userType, setUserType] = useState("");
+
+    useEffect(() => {
+        const userFromLocalStorage = localStorage.getItem("user");
+        setEmail(userFromLocalStorage ? JSON.parse(userFromLocalStorage).email : "");
+        setUserType(userFromLocalStorage ? JSON.parse(userFromLocalStorage).userType : "");
+    },[])
 
     async function handleLogout() {
         try {
             // await logout();
-            localStorage.removeItem('user');
+            localStorage.clear();
             setError("")
         } catch {
             setError("Failed to log out");

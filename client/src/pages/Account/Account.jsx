@@ -4,25 +4,17 @@ import AccountQuantityChange from './AccountQuantityChange';
 import { getProfile } from '../../contexts/apis';
 
 export default function Account() {
-    const user = localStorage.getItem('user');
-    const email = user ? JSON.parse(user).email : "";
-
+    const [email, setEmail] = useState("");
     const [profile, setProfile] = useState({
         email: '', name: '', 
         phone: '', userType: '',
         group: '', topics: ''
     });
-    const [showReset, setShowReset] = useState(false);
-
-    const groupTypes = { 
-        adults: 'adults', children: 'children', 
-        elders: 'elders', pets: 'pets',
-    }
-
-    const updateProfile = () => {
-        console.log('update profile');
-        // postUpdateProfile(profile, token, successUpdateProfile, failureUpdateProfile);
-    }
+    
+    useEffect(() => {
+        const userFromLocalStorage = localStorage.getItem("user");
+        setEmail(userFromLocalStorage ? JSON.parse(userFromLocalStorage).email : "");
+    },[])
 
     const nameChange = (value) => setProfile({...profile, name: value});
     const emailChange = (value) => setProfile({...profile, email: value});
@@ -66,6 +58,7 @@ export default function Account() {
         getProfile({'email' : email}, successProfileDetails, failureProfileDetails);
     }
     const successProfileDetails = (success) => {
+        console.log(success);
         setProfile({
             email: success.email,
             name: success.name,
@@ -80,7 +73,7 @@ export default function Account() {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    useEffect(() => getProfileDetails(), []);
+    useEffect(() => getProfileDetails(), [email]);
 
     return (
         <div className='flex flex-row items-center'>
