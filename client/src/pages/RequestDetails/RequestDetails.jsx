@@ -7,14 +7,18 @@ import './more-info-request.css';
 
 export default function RequestDetails(props){
 
-    let { requestId } = useParams();
-    const user = localStorage.getItem('user');
-    const email = user ? JSON.parse(user).email : "";
-    const name = user ? JSON.parse(user).name : "";
-    const userId = user ? JSON.parse(user).id : "";
+    let { reqId } = useParams();
+    const [requestId, setRequestId] = useState(reqId);
+    const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
+    const [userId, setUserId] = useState("");
     const [currentRequest, setCurrentRequest] = useState();
 
     useEffect(() => {
+        const user = localStorage.getItem('user');
+        setEmail(user ? JSON.parse(user).email : "");
+        setName(user ? JSON.parse(user).name : "");
+        setUserId(user ? JSON.parse(user).id : "");
         getRequestById({id: requestId}, successGetMoreInfo, failureGetMoreInfo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

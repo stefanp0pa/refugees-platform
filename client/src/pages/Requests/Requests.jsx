@@ -3,75 +3,31 @@ import SideMenu from "../../components/SideMenu/SideMenu";
 import SearchBar from "../../components/SearchBar/SearchBar";
 import RequestCard from "../../components/RequestCard/RequestCard";
 
-import { getAllRequests, getProfile } from '../../contexts/apis';
+import { getAllRequests } from '../../contexts/apis';
 import './requests-list.css';
 
-
 export default function Requests(){
-    const user = localStorage.getItem('user');
-    const [email, setEmail] = useState(user ? JSON.parse(user).email : "");
-
-    const [profile, setProfile] = useState(null);
+    const [email, setEmail] = useState('');
     const [requestsList, setRequestsList] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [currentTab, setCurrentTab] = useState('');
     const [filteredRequests, setFilteredRequests] = useState([]);
 
     useEffect(() => {
-        getProfile({email: email}, successGetProfile, failureGetProfile);
+        const user = localStorage.getItem('user');
+        setEmail(user ? JSON.parse(user).email : "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
-        if (profile === null) return;
-
-        let requests = [];
-
-        const successGetRequests = (requestsData) => {
-            requests = requestsData;
-            setRequestsList(requests);
-        };
-        const failureGetRequests = (error) => {
-            console.log(error);
-            setRequestsList([]);
-        };
-
+        const successGetRequests = (requestsData) => setRequestsList(requestsData);
+        const failureGetRequests = (error) => setRequestsList([]);
         getAllRequests(successGetRequests, failureGetRequests);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [profile]);
-
-    const successGetProfile = (data) => {
-        setProfile(data);
-    }
-
-    const failureGetProfile = (error) => {
-        console.log(error);
-        setProfile(null);
-    }
+    },[email]);
 
     const changeCurrentTab = (identifier) => {
         setCurrentTab(identifier);
     }
-
-    // const bookmarkPost = (request) => {
-    //     const successBookmark = () => {
-    //         const oldRequests = requestsList;
-    //         const newRequests = oldRequests.map(oldRequest => {
-    //             if (oldRequest.id === request.id) {
-    //                 return { ...oldRequest, favorite: !oldRequest.favorite };
-    //             }
-    //             return oldRequest;
-    //         });
-    //         setRequestsList(newRequests);
-    //     }
-    //     const failureBookmark = (error) => {
-    //         console.log(error);
-    //     }
-
-    //     (request.favorite === true)
-    //         ? deleteFavorite({postId: request.id, profileId: profile.id}, token, successBookmark, failureBookmark)
-    //         : postFavorite({postId: request.id, profileId: profile.id}, token, successBookmark, failureBookmark);
-    // }
 
     const filterRequestsSearch = (searchText, identifier) => {
         if (requestsList == null || requestsList < 1)
@@ -79,9 +35,6 @@ export default function Requests(){
 
         identifier = identifier.trim();
         searchText = searchText.trim();
-
-        const user = localStorage.getItem('user');
-        const email = user ? JSON.parse(user).email : "";
 
         let filteredByIdentifier;
         if(identifier !== 'myRequests' && identifier !== 'favorites') {
@@ -113,7 +66,7 @@ export default function Requests(){
 
     return (
         <div className="grid grid-cols-6 gap-0">
-            <SideMenu setCurrentTab={changeCurrentTab} profile={profile} currentTab='requests'/>
+            <SideMenu setCurrentTab={changeCurrentTab} currentTab='requests'/>
             <div className="card-list sm:col-span-4 col-span-6">
                 <SearchBar
                     value={searchText}

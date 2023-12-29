@@ -40,7 +40,7 @@ const router = createBrowserRouter([
     element: <Requests/>
   },
   {
-    path: "request-details/:requestId",
+    path: "request-details/:reqId",
     element: <RequestDetails/>
   },
   {
@@ -52,7 +52,7 @@ const router = createBrowserRouter([
     element: <Offers/>
   },
   {
-    path: "offer-details/:offerId",
+    path: "offer-details/:offId",
     element: <OfferDetails/>
   },
   {

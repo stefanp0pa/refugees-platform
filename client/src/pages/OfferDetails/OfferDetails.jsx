@@ -7,15 +7,19 @@ import './more-info-offer.css';
 
 export default function OfferDetails(props){
 
-    let { offerId } = useParams();
-    const user = localStorage.getItem('user');
-    const email = user ? JSON.parse(user).email : "";
-    const name = user ? JSON.parse(user).name : "";
-    const userId = user ? JSON.parse(user).id : "";
-
+    let { offId } = useParams();
+    
+    const [offerId, setOfferId] = useState(offId);
+    const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
+    const [userId, setUserId] = useState("");
     const [currentOffer, setCurrentOffer] = useState();
 
     useEffect(() => {
+        const user = localStorage.getItem('user');
+        setEmail(user ? JSON.parse(user).email : "");
+        setName(user ? JSON.parse(user).name : "");
+        setUserId(user ? JSON.parse(user).id : "");
         getOfferById({id: offerId}, successGetMoreInfo, failureGetMoreInfo);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
@@ -49,7 +53,6 @@ export default function OfferDetails(props){
                 <h2 className="text-center mb-4 text-xl">
                     <strong>Description</strong>
                 </h2>
-                
 
                 <div className='info-div'>
                     <div className='section-div'>
