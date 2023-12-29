@@ -7,6 +7,8 @@ import pika
 import time
 from flask_cors import CORS
 from bson import json_util
+
+import requests
 import uuid
 
 app = Flask(__name__)
@@ -51,106 +53,19 @@ except Exception as e:
     exit()
 
 
-def seed_users_from_json(db, file_path = "seed_users.json"):
-    with open(file_path, 'r') as file:
-        users_data = json.load(file)
-
-    for user_data in users_data:
-        existing_user = db.users.find_one({'id': user_data['id']})
-        if not existing_user:
-            new_user = User(**user_data)
-            db.users.insert_one(new_user.__dict__)
-            print(f">>> [Users] Inserted user with id {user_data['id']}.")
-
-def seed_requests_from_json(db, file_path = "seed_requests.json"):
-    with open(file_path, 'r') as file:
-        requests_data = json.load(file)
-
-    for request_data in requests_data:
-        existing_req = db.requests.find_one({'id': request_data['id']})
-        if not existing_req:
-            new_request = Request(**request_data)
-            db.requests.insert_one(new_request.__dict__)
-            print(f">>> [Requests] Inserted request with id {request_data['id']}.")
-            
-def seed_offers_from_json(db, file_path = "seed_offers.json"):
-    with open(file_path, 'r') as file:
-        offers_data = json.load(file)
-
-    for offer_data in offers_data:
-        existing_offer = db.offers.find_one({'id': offer_data['id']})
-        if not existing_offer:
-            new_offer = Offer(**offer_data)
-            db.offers.insert_one(new_offer.__dict__)
-            print(f">>> [Offers] Inserted offer with id {offer_data['id']}.")
-
-def seed_subscribers_from_json(db, file_path = "seed_subscribers.json"):
-    with open(file_path, 'r') as file:
-        subscribers_data = json.load(file)
-
-    for subscriber_data in subscribers_data:
-        existing_subs = db.subscribers.find_one({'authorId': subscriber_data['authorId']})
-        if not existing_subs:
-            new_subs = Subscriber(**subscriber_data)
-            db.subscribers.insert_one(new_subs.__dict__)
-            print(f">>> [Subscribers] Inserted subscribed topics for user {subscriber_data['name']}.")
-
-
-seed_users_from_json(db)
-seed_requests_from_json(db)
-seed_offers_from_json(db)
-seed_subscribers_from_json(db)
-
-# ############################## PROFILE #####################################
-
-@app.route('/api/login', methods=['POST'])
-def login():
-    try:
-        payload = request.get_json()
-        email = payload['email']
-        password = payload['password']
+@app.before_request
+def before_request():
+    user_validation_endpoint = "http://localhost:7021/api/validate-user"
+    if 'login' not in request.url and 'register' not in request.url and request.method == 'POST':
+        try:
+            response = requests.post(user_validation_endpoint, json = request.get_json(), headers = {'Content-Type': 'application/json'})
+            if response.status_code == 200:
+                print("Validation middleware successful!")
+            else:
+                return jsonify({'message': 'User validation unsuccessful'}), 400
+        except Exception as ex:
+            print(ex)
         
-        result = db.users.find_one({'email': email, 'password': password})
-        if result:
-            response = json_util.dumps(result)
-            return response, 200
-        return jsonify({'message': 'Login unsuccessful'}), 400
-    except Exception as ex:
-        print(ex)
-        return Response(status=500)
-
-@app.route('/api/register', methods=['POST'])
-def register():
-    try:
-        payload = request.get_json()
-        new_user = {
-            'id': str(uuid.uuid4()),
-            'name': payload['name'],
-            'email': payload['email'],
-            'phone': payload['phone'],
-            'password': payload['password'],
-            'phone': payload['phone'],
-            'userType': payload['userType'],
-            'group': payload['group'],
-            'topics': payload['topics'],
-        }
-        new_subscriber = {
-            'authorId': new_user['id'],
-            'name': new_user['name'],
-            'topics': payload['topics']
-        }
-            
-        db.users.insert_one(new_user)
-        db.subscribers.insert_one(new_subscriber)
-        
-        result = db.users.find_one({'email': new_user['email']})
-        print(result)
-        response = json_util.dumps(result)
-        return response, 201
-        
-    except Exception as ex:
-        print(ex)
-        return Response(status=500)
 
 # ############################## REQUESTS #####################################
 
@@ -370,19 +285,6 @@ def get_offer_details():
         print(ex)
         return Response(status=500)
 
-# ############################## PROFILE ####################################
-
-@app.route('/api/profile', methods=['GET'])
-def get_profile():
-    try:
-        args = request.args.to_dict()
-        print(args['email'])
-        response = db.users.find_one({'email': args['email']})
-        response = json_util.dumps(response)
-        return response, 200
-    except Exception as ex:
-        print(ex)
-        return Response(status=500)
 
 # ############################## MAIN #######################################
 @app.route('/')

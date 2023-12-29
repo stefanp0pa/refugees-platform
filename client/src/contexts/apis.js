@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const apiURL = 'http://localhost:7020'; //replace with localhost:7020 when testing
+const identityApiURL = 'http://localhost:7021';
 
 const postOfferURL = apiURL + '/api/offers';
 const getOfferURL = apiURL + '/api/offers';
@@ -12,10 +13,11 @@ const postRequestURL = apiURL + '/api/requests';
 const acceptRequestURL = apiURL + '/api/requests/accept';
 const getRequestByIdURL = apiURL + '/api/request-details';
 
-const postLoginURL = apiURL + '/api/login';
-const postRegisterURL = apiURL + '/api/register';
-const getProfileURL = apiURL + '/api/profile';
+const postLoginURL = identityApiURL + '/api/login';
+const postRegisterURL = identityApiURL + '/api/register';
+const getProfileURL = identityApiURL + '/api/profile';
 
+const appendValidationBody = (body) => ({...body, email: "john.doe@gmail.com", password: "123456" });
 
 export const getAllRequests = (success, failure) => {
     axios({
@@ -36,7 +38,7 @@ export const postRequest = (requestData, success, failure) => {
     axios({
         method: 'post',
         url: postRequestURL,
-        data: requestData,
+        data: appendValidationBody(requestData),
         headers: {
             'content-type': 'application/json; charset=utf-8'
         }
@@ -70,7 +72,7 @@ export const acceptRequest = (requestData, success, failure) => {
     axios({
         method: 'post',
         url: acceptRequestURL,
-        data: requestData,
+        data: appendValidationBody(requestData),
         headers: {
             'content-type': 'application/json; charset=utf-8'
         }
@@ -103,7 +105,7 @@ export const postOffer = (offerData, success, failure) => {
     axios({
         method: 'post',
         url: postOfferURL,
-        data: offerData,
+        data: appendValidationBody(offerData),
         headers: {
             'content-type': 'application/json; charset=utf-8'
         }
@@ -137,7 +139,7 @@ export const acceptOffer = (offerData, success, failure) => {
     axios({
         method: 'post',
         url: acceptOfferURL,
-        data: offerData,
+        data: appendValidationBody(offerData),
         headers: {
             'content-type': 'application/json; charset=utf-8'
         }
