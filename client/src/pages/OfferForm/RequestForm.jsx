@@ -53,6 +53,7 @@ export default function OfferForm() {
     }
 
     const submitOffer = () => {
+        console.log(offerForm)
         postOffer({...offerForm,
             email: email,
             author: profile.name,

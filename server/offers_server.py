@@ -17,9 +17,14 @@ CORS(app, resources={r"*": {"origins": "*"}})
 MONGODB_HOST = 'localhost'
 
 # DEV_MODE = False
-# RABBITMQ_HOST = 'localhost' if DEV_MODE else 'rabbitmq'
+RABBITMQ_HOST = 'localhost'
 # MONGODB_HOST = 'localhost' if DEV_MODE else 'mongo-database'
 
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+channel = connection.channel()
+
+channel.queue_declare(queue='subscription_offer')
+channel.queue_declare(queue='request_acceptance')
 
 class User:
     def __init__(self, id, name, email, password, phone, userType, group):
@@ -69,14 +74,12 @@ def before_request():
 # ############################## OFFERS #######################################
 
 def send_offer_accept_email(offer_author, accepter):
-    print(f">>>> 📧 Sending email to {offer_author} that {accepter} has accepted their help offer...")
-    print(">>>> 📧 Email sent!")
+    print(f">>>> 📧 [Notification] Notifying {offer_author} that {accepter} has accepted their help offer...")
+    channel.basic_publish(exchange='', routing_key='offer_acceptance', body=json.dumps({"offer_author": offer_author, "accepter": accepter}))    
 
 def broadcast_offer(offer_title, subscribers):
-    print(f">>>> 📧 Broadcasting offer {offer_title} to subscribers...")
-    for subscriber in subscribers:
-        print(f">>>> 📧 Sending email to {subscriber} that a new offer has been posted...")
-        print(">>>> 📧 Email sent!")
+    print(f">>>> 📧 Broadcasting offer {offer_title} to subscribers on {subscribers}")
+    channel.basic_publish(exchange='', routing_key='subscription_offer', body=json.dumps({"title": offer_title, "subscribers": subscribers}))
 
 # Posting a new offer
 @app.route('/api/offers', methods=['POST'])
@@ -114,6 +117,7 @@ def post_offers():
         filtered_subscribers_names = [filtered_subscriber["name"] for filtered_subscriber in filtered_subscribers]
         
         broadcast_offer(payload['title'], filtered_subscribers_names)
+
         
         return Response(status=201)
     except Exception as ex:

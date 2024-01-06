@@ -17,9 +17,14 @@ CORS(app, resources={r"*": {"origins": "*"}})
 MONGODB_HOST = 'localhost'
 
 # DEV_MODE = False
-# RABBITMQ_HOST = 'localhost' if DEV_MODE else 'rabbitmq'
+RABBITMQ_HOST = 'localhost'
 # MONGODB_HOST = 'localhost' if DEV_MODE else 'mongo-database'
 
+connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+channel = connection.channel()
+
+channel.queue_declare(queue='subscription_request')
+channel.queue_declare(queue='request_acceptance')
 
 class User:
     def __init__(self, id, name, email, password, phone, userType, group):
@@ -70,14 +75,12 @@ def before_request():
 # ############################## REQUESTS #####################################
 
 def send_request_accept_email(request_author, accepter):
-    print(f">>>> 📧 Sending email to {request_author} that {accepter} has accepted their help request...")
-    print(">>>> 📧 Email sent!")
+    print(f">>>> 📧 [Notifications] Notifying {request_author} that {accepter} has accepted their help request...")
+    channel.basic_publish(exchange='', routing_key='request_acceptance', body=json.dumps({"request_author": request_author, "accepter": accepter}))
 
 def broadcast_request(request_title, subscribers):
-    print(f">>>> 📧 Broadcasting request {request_title} to subscribers...")
-    for subscriber in subscribers:
-        print(f">>>> 📧 Sending email to {subscriber} that a new request has been posted...")
-        print(">>>> 📧 Email sent!")
+    print(f">>>> 🐇 [Notifications] Sending {request_title} to {subscribers} subscribers...")
+    channel.basic_publish(exchange='', routing_key='subscription_request', body=json.dumps({"title": request_title, "subscribers": subscribers}))
 
 # Posting a new request
 @app.route('/api/requests', methods=['POST'])
