@@ -28,45 +28,45 @@ def seed_users_from_json(db, file_path = "seed_users.json"):
     with open(file_path, 'r') as file:
         users_data = json.load(file)
 
+    db.users.delete_many({})
+
     for user_data in users_data:
-        existing_user = db.users.find_one({'id': user_data['id']})
-        if not existing_user:
-            new_user = User(**user_data)
-            db.users.insert_one(new_user.__dict__)
-            print(f">>> [Users] Inserted user with id {user_data['id']}.")
+        new_user = User(**user_data)
+        db.users.insert_one(new_user.__dict__)
+        print(f">>> [Users] Inserted user with id {user_data['id']}.")
 
 def seed_requests_from_json(db, file_path = "seed_requests.json"):
     with open(file_path, 'r') as file:
         requests_data = json.load(file)
 
+    db.requests.delete_many({})
+
     for request_data in requests_data:
-        existing_req = db.requests.find_one({'id': request_data['id']})
-        if not existing_req:
-            new_request = Request(**request_data)
-            db.requests.insert_one(new_request.__dict__)
-            print(f">>> [Requests] Inserted request with id {request_data['id']}.")
-            
+        new_request = Request(**request_data)
+        db.requests.insert_one(new_request.__dict__)
+        print(f">>> [Requests] Inserted request with id {request_data['id']}.")
+        
 def seed_offers_from_json(db, file_path = "seed_offers.json"):
     with open(file_path, 'r') as file:
         offers_data = json.load(file)
 
+    db.offers.delete_many({})
+
     for offer_data in offers_data:
-        existing_offer = db.offers.find_one({'id': offer_data['id']})
-        if not existing_offer:
-            new_offer = Offer(**offer_data)
-            db.offers.insert_one(new_offer.__dict__)
-            print(f">>> [Offers] Inserted offer with id {offer_data['id']}.")
+        new_offer = Offer(**offer_data)
+        db.offers.insert_one(new_offer.__dict__)
+        print(f">>> [Offers] Inserted offer with id {offer_data['id']}.")
 
 def seed_subscribers_from_json(db, file_path = "seed_subscribers.json"):
     with open(file_path, 'r') as file:
         subscribers_data = json.load(file)
 
+    db.subscribers.delete_many({})
+
     for subscriber_data in subscribers_data:
-        existing_subs = db.subscribers.find_one({'authorId': subscriber_data['authorId']})
-        if not existing_subs:
-            new_subs = Subscriber(**subscriber_data)
-            db.subscribers.insert_one(new_subs.__dict__)
-            print(f">>> [Subscribers] Inserted subscribed topics for user {subscriber_data['name']}.")
+        new_subs = Subscriber(**subscriber_data)
+        db.subscribers.insert_one(new_subs.__dict__)
+        print(f">>> [Subscribers] Inserted subscribed topics for user {subscriber_data['name']}.")
 
 
 # ############################## MAIN #######################################

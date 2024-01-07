@@ -53,6 +53,7 @@ export default function RequestForm() {
     }
 
     const submitRequest = () => {
+        console.log(requestForm)
         postRequest({...requestForm,
             email: email,
             author: profile.name,
